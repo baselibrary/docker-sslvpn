@@ -5,6 +5,7 @@ set -e
 set -o pipefail
 
 #####   variables  ##### 
+: ${SSH_PORT:=20022}
 : ${SSH_PASS:=}
 : ${VPN_TYPE:=}
 : ${VPN_USER:=}
@@ -26,6 +27,9 @@ if [[ $# -lt 1 ]] || [[ "$1" == "-"* ]]; then
   	fi
   	if [ "$SSH_PASS" ]; then
     	echo "root:$SSH_PASS" | chpasswd
+  	fi
+  	if [ "$SSH_PORT" ]; then
+    	sed -i "s/Port.*/Port $SSH_PORT/g" /etc/ssh/sshd_config
   	fi
   	service ssh restart
 	fi

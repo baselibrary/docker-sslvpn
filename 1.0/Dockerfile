@@ -27,8 +27,6 @@ ENV PYTHONIOENCODING UTF-8
 ADD docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod a+x            /docker-entrypoint.sh
 
-EXPOSE 22
-
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
 VOLUME ["/var/lib/sslvpn"]
