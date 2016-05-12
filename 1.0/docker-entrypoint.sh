@@ -14,13 +14,13 @@ set -o pipefail
 #run sslvpn in background
 if [[ $# -lt 1 ]] || [[ "$1" == "-"* ]]; then
 	## check the required parameters
-	if [ -z "$VPN_TYPE" -z "$VPN_USER" ]; then
+	if [ -z "$VPN_TYPE" -o -z "$VPN_USER" ]; then
 		echo >&2 'Error: vpn type and user option is not specified'
 		exit 1
 	fi
 
 	## setting the ssh
-	if [ "$AUTHORIZED_KEYS" -a "$SSH_PASS" ]; then
+	if [ "$AUTHORIZED_KEYS" -o "$SSH_PASS" ]; then
 		if [ "$AUTHORIZED_KEYS" ]; then
     	/usr/bin/ansible local -o -c local -m authorized_key  -a "user=root key='${AUTHORIZED_KEYS}'"
   	fi
