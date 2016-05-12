@@ -6,10 +6,12 @@ set -o pipefail
 
 #####   variables  ##### 
 : ${SSH_PORT:=20022}
+: ${SSH_CERT:=}
 : ${SSH_PASS:=}
 : ${VPN_TYPE:=}
 : ${VPN_USER:=}
 : ${VPN_PASS:=}
+: ${AUTH_KEY:=}
 : ${TOTP_SEED:=}
 
 #run sslvpn in background
