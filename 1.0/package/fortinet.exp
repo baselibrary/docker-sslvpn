@@ -1,0 +1,16 @@
+#!/usr/bin/expect -f
+
+set arguments [lrange $argv 0 end]
+
+spawn /opt/sslvpn/fortinet/forticlientsslvpn_cli --keepalive --vpnuser $env(VPN_USER) {*}$arguments
+expect {
+	"Password for VPN:" {
+		send "$env(VPN_PASS)\r"
+		expect {
+			"*Would you like to connect to this server? (Y/N)\r\n" {
+				send "Y\n"
+				interact
+			}
+		}
+	}
+}

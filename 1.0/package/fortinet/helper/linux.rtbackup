@@ -1,0 +1,64 @@
+#! /bin/bash
+
+export PATH=/sbin:/usr/sbin:/bin:/usr/bin
+
+base=`dirname "$0"`
+if [ ! -x /sbin/ip -a ! -x /bin/ip -a ! -x /usr/bin/ip -a ! -x /usr/sbin/ip ]; then
+	echo "Please install the iproutes utility and run forticlientsslvpn again" >> "$base/forticlientsslvpn.log"
+	echo "forticlientsslvpn can NOT get routes, give up" >> "$base/forticlientsslvpn.log"
+	exit -1
+fi
+backup="$base/forticlientsslvpn.backup.tmp"
+
+touch "$backup"
+chown root "$backup"
+chgrp root "$backup"
+chmod a-w "$backup"
+
+get_gw()
+{
+	local	gw
+
+	gw=`ip route get $1|grep "via"|awk ' {print $3 } '`
+	if [ "$gw" == "" ]; then
+		echo "no gateway found for $1. Trying our own interface" >> "$base/forticlientsslvpn.log"
+		gw=`ip route get $1|grep "src"|awk -F " src " '{ print $2 }'`
+	fi
+	echo $gw
+
+	return	0
+}
+
+if_has_record()
+{
+	local	tmp
+
+	tmp=`netstat -nr|grep "^$1"`
+	if [ "$tmp" == "" ]; then
+		return	0
+	fi
+	return	1
+}
+
+specialgw=$(get_gw 1.1.1.1)
+
+$(if_has_record 1.1.1.1)
+specialhasrd=$?
+
+if [ $1 == 1.1.1.1 ]; then
+	svrgw=$specialgw
+	svrhasrd=$specialgw
+else
+	svrgw=$(get_gw $1)
+
+	$(if_has_record $1)
+	svrhasrd=$?
+fi
+
+echo "gateway for 1.1.1.1:$specialgw for $1:$svrgw" >> "$base/forticlientsslvpn.log"
+echo "if has single route record for 1.1.1.1:$specialhasrd for $1:$svrhasrd" >> "$base/forticlientsslvpn.log"
+echo "specialgw=$specialgw" > "$backup"
+echo "specialhasrd=$specialhasrd" >> "$backup"
+echo "svrgw=$svrgw" >> "$backup"
+echo "svrhasrd=$svrhasrd" >> "$backup"
+
