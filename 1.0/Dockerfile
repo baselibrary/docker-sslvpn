@@ -4,7 +4,7 @@ MAINTAINER ShawnMa <qsma@thoughtworks.com>
 ## Packages
 RUN \
   apt-get update &&\
-  apt-get install -y expect iptables openvpn openssh-server &&\
+  apt-get install -y expect ppp iptables openvpn openssh-server &&\
   pip install gacli &&\
   rm -rf /var/lib/apt/lists/*
 COPY package /opt/sslvpn/
