@@ -4,7 +4,7 @@ MAINTAINER ShawnMa <qsma@thoughtworks.com>
 ## Packages
 RUN \
   apt-get update &&\
-  apt-get install -y expect iptables openvpn openssh-server &&\
+  apt-get install -y expect ppp iptables openvpn openssh-server &&\
   pip install gacli &&\
   rm -rf /var/lib/apt/lists/*
 COPY package /opt/sslvpn/
@@ -20,14 +20,13 @@ RUN \
 ENV VPN_TYPE  ""
 ENV VPN_USER  ""
 ENV VPN_PASS  ""
-ENV TOTP_SEED ""
+ENV VPN_ROUTE ""
+ENV AUTH_SEED ""
 ENV PYTHONIOENCODING UTF-8
 
 ## Scripts
 ADD docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod a+x            /docker-entrypoint.sh
-
-EXPOSE 22
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
