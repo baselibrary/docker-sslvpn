@@ -2,7 +2,11 @@
 
 set arguments [lrange $argv 0 end]
 
-spawn /opt/sslvpn/fortinet/openfortivpn --no-routes -u $env(VPN_USER) {*}$arguments
+if { $env(VPN_ROUTE) !="" } {
+	spawn /opt/sslvpn/fortinet/openfortivpn --no-routes -u $env(VPN_USER) {*}$arguments
+} else {
+	spawn /opt/sslvpn/fortinet/openfortivpn -u $env(VPN_USER) {*}$arguments	
+}
 expect {
 	"VPN account password:" {
 		send "$env(VPN_PASS)\n"

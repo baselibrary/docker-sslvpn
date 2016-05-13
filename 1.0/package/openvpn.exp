@@ -2,7 +2,11 @@
 
 set arguments [lrange $argv 0 end]
 
-spawn openvpn {*}$arguments
+if { $env(VPN_ROUTE) !="" } {
+	spawn openvpn --route-noexec {*}$arguments
+} else {
+	spawn openvpn {*}$arguments	
+}
 expect {
 	"Enter Auth Username:" {
 		send "$env(VPN_USER)\r"
@@ -14,6 +18,21 @@ expect {
 				} else {
 					set password "$env(VPN_PASS)"
 					send "password\n"
+				}
+				expect -re "tun\[0-9\]" {
+					set gw $expect_out(0,string)
+					puts "$gw"
+					set ip [ exec bash -c "ifconfig $gw | grep 'inet addr' | awk -F: '{print \$2}' | awk '{print \$1}'" ]
+					expect {
+						"*Initialization Sequence Completed" {
+							if { $env(VPN_ROUTE) !="" } {
+								set output [ exec ip route add to $env(VPN_ROUTE) via $ip dev $gw ]
+								puts "INFO:   Route to $env(VPN_ROUTE) via $ip dev $gw."
+							} else {
+								puts "WARN:   You need to add a custom route via $ip dev $gw."
+							}
+						}
+					}
 				}
 				interact
 			}
