@@ -11,8 +11,8 @@ set -o pipefail
 : ${VPN_TYPE:=}
 : ${VPN_USER:=}
 : ${VPN_PASS:=}
-: ${AUTH_KEY:=}
-: ${TOTP_SEED:=}
+: ${VPN_ROUTE:=}
+: ${AUTH_SEED:=}
 
 #run sslvpn in background
 if [[ $# -lt 1 ]] || [[ "$1" == "-"* ]]; then
@@ -37,8 +37,8 @@ if [[ $# -lt 1 ]] || [[ "$1" == "-"* ]]; then
 	fi
 
 	## setting the totp seed
-  if [ "$TOTP_SEED" ]; then
-    /usr/bin/ansible local -o -c local -m shell  -a "echo $TOTP_SEED > ~/.ga && chmod 0400 ~/.ga"
+  if [ "$AUTH_SEED" ]; then
+    /usr/bin/ansible local -o -c local -m shell  -a "echo $AUTH_SEED > ~/.ga && chmod 0400 ~/.ga"
   fi
 
   ##### run scripts  #####

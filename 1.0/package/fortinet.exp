@@ -2,15 +2,24 @@
 
 set arguments [lrange $argv 0 end]
 
-spawn /opt/sslvpn/fortinet/forticlientsslvpn_cli --keepalive --vpnuser $env(VPN_USER) {*}$arguments
+spawn /opt/sslvpn/fortinet/openfortivpn --no-routes -u $env(VPN_USER) {*}$arguments
 expect {
-	"Password for VPN:" {
-		send "$env(VPN_PASS)\r"
-		expect {
-			"*Would you like to connect to this server? (Y/N)\r\n" {
-				send "Y\n"
-				interact
+	"VPN account password:" {
+		send "$env(VPN_PASS)\n"
+		expect -re "ppp\[0-9\]" {
+			set gw $expect_out(0,string)
+			set ip [ exec bash -c "ifconfig $gw | grep 'inet addr' | awk -F: '{print \$2}' | awk '{print \$1}'" ]
+			expect {
+				"Tunnel is up and running." {
+					if { $env(VPN_ROUTE) !="" } {
+						set output [ exec ip route add to $env(VPN_ROUTE) via $ip dev $gw ]
+						puts "INFO:   Route to $env(VPN_ROUTE) via $ip dev $gw."
+					} else {
+						puts "INFO:   You need to add a custom route via $ip dev $gw."
+					}
+				}
 			}
 		}
+		interact
 	}
 }
