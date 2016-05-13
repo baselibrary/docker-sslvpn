@@ -15,7 +15,7 @@ expect {
 						set output [ exec ip route add to $env(VPN_ROUTE) via $ip dev $gw ]
 						puts "INFO:   Route to $env(VPN_ROUTE) via $ip dev $gw."
 					} else {
-						puts "INFO:   You need to add a custom route via $ip dev $gw."
+						puts "WARN:   You need to add a custom route via $ip dev $gw."
 					}
 				}
 			}
