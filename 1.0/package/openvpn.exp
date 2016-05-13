@@ -8,7 +8,7 @@ expect {
 		send "$env(VPN_USER)\r"
 		expect {
 			"Enter Auth Password:" {
-				if { $env(TOTP_SEED) !="" } {
+				if { $env(AUTH_SEED) !="" } {
 					set password [exec ga]
 					send "$password\n"
 				} else {
