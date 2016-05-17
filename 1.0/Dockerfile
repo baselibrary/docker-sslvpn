@@ -4,7 +4,7 @@ MAINTAINER ShawnMa <qsma@thoughtworks.com>
 ## Packages
 RUN \
   apt-get update &&\
-  apt-get install -y expect ppp iptables openvpn openssh-server &&\
+  apt-get install -y expect ppp iptables openvpn dante-server openssh-server &&\
   pip install gacli &&\
   rm -rf /var/lib/apt/lists/*
 COPY package /opt/sslvpn/
@@ -17,10 +17,12 @@ RUN \
   sed -i "s/PermitRootLogin.*/PermitRootLogin yes/g"              /etc/ssh/sshd_config
 
 ## Environments
+ENV PATH      /opt/sslvpn/bin:$PATH
 ENV VPN_TYPE  ""
 ENV VPN_USER  ""
 ENV VPN_PASS  ""
 ENV VPN_ROUTE ""
+ENV SOCK_PORT ""
 ENV AUTH_SEED ""
 ENV PYTHONIOENCODING UTF-8
 

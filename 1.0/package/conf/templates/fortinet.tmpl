@@ -1,0 +1,14 @@
+host       = {{getenv "VPN_HOST"}}
+port       = {{getenv "VPN_PORT"}}
+username   = {{getenv "VPN_USER"}}
+password   = {{getenv "VPN_PASS"}}
+set-dns    = 0
+{if getenv "VPN_ROUTE"}}
+set-routes = 0
+{{else}}
+set-routes = 1
+{{end}}
+# X509 certificate sha256 sum, trust only this one!
+{if getenv "VPN_FORTINET_TRUSTED_CERT"}}
+trusted-cert = {{ getenv "VPN_FORTINET_TRUSTED_CERT" }}
+{{end}}

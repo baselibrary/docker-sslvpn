@@ -13,6 +13,7 @@ set -o pipefail
 : ${VPN_PASS:=}
 : ${VPN_ROUTE:=}
 : ${AUTH_SEED:=}
+: ${SOCK_PORT:=10080}
 
 #run sslvpn in background
 if [[ $# -lt 1 ]] || [[ "$1" == "-"* ]]; then
@@ -34,6 +35,8 @@ if [[ $# -lt 1 ]] || [[ "$1" == "-"* ]]; then
     	sed -i "s/Port.*/Port $SSH_PORT/g" /etc/ssh/sshd_config
   	fi
   	service ssh restart
+
+    
 	fi
 
 	## setting the totp seed

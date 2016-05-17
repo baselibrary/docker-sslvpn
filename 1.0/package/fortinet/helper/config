@@ -1,3 +1,0 @@
-loglevel=1
-disable_openssl_renegotiation=0
-invalid_peer_cert_action=1

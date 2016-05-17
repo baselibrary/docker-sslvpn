@@ -3,9 +3,9 @@
 set arguments [lrange $argv 0 end]
 
 if { $env(VPN_ROUTE) !="" } {
-	spawn /opt/sslvpn/fortinet/openfortivpn --no-routes -u $env(VPN_USER) {*}$arguments
+	spawn openfortivpn --no-routes -u $env(VPN_USER) {*}$arguments
 } else {
-	spawn /opt/sslvpn/fortinet/openfortivpn -u $env(VPN_USER) {*}$arguments	
+	spawn openfortivpn -u $env(VPN_USER) {*}$arguments	
 }
 expect {
 	"VPN account password:" {
@@ -18,8 +18,10 @@ expect {
 					if { $env(VPN_ROUTE) !="" } {
 						set output [ exec ip route add to $env(VPN_ROUTE) via $ip dev $gw ]
 						puts "INFO:   Route to $env(VPN_ROUTE) via $ip dev $gw."
+						set result [exec danted.sh $gw $env(SOCK_PORT) $env(VPN_ROUTE)]
 					} else {
 						puts "WARN:   You need to add a custom route via $ip dev $gw."
+						set result [exec danted.sh $gw $env(SOCK_PORT) 0.0.0.0/0]
 					}
 				}
 			}
