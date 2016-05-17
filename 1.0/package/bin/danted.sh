@@ -6,7 +6,7 @@ GW="$1"
 PORT="$2"
 ROUTE="$3"
 
-cat <<EOF >> /etc/danted.conf
+cat <<EOF > /etc/danted.conf
 logoutput: syslog
 
 # the interface name can be used instead of the address.
