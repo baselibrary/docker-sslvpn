@@ -28,4 +28,4 @@ pass {
 }
 EOF
 
-service danted restart
+exec danted -D -f /etc/danted.conf
