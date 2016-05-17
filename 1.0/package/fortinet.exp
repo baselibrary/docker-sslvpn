@@ -18,10 +18,14 @@ expect {
 					if { $env(VPN_ROUTE) !="" } {
 						set output [ exec ip route add to $env(VPN_ROUTE) via $ip dev $gw ]
 						puts "INFO:   Route to $env(VPN_ROUTE) via $ip dev $gw."
-						set result [ exec danted.sh $gw $env(SOCK_PORT) $env(VPN_ROUTE) ]
+						if {[catch { exec bash -c "danted.sh $gw $env(SOCK_PORT) $env(VPN_ROUTE)" } result] == 0} { 
+							puts "INFO:   Socks 5 running."
+						}
 					} else {
 						puts "WARN:   You need to add a custom route via $ip dev $gw."
-						set result [ exec danted.sh $gw $env(SOCK_PORT) 0.0.0.0/0 ]
+						if {[catch { exec bash -c "danted.sh $gw $env(SOCK_PORT) 0.0.0.0/0" } result] == 0} { 
+							puts "INFO:   Socks 5 running."
+						}
 					}
 				}
 			}

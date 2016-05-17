@@ -22,11 +22,17 @@ user.notprivileged: nobody
 
 client pass {
   from: 0.0.0.0/0 port 1-65535 to: 0.0.0.0/0
+  log: connect disconnect
 }
 
 pass {
-  from: $ROUTE to: 0.0.0.0/0
+  from: 0.0.0.0/0 to: $ROUTE
   protocol: tcp udp
+}
+
+block {
+	from: 0.0.0.0/0 to: 0.0.0.0/0
+	log: connect error
 }
 EOF
 
