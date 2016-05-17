@@ -29,5 +29,3 @@ pass {
   protocol: tcp udp
 }
 EOF
-
-exec danted -D -f /etc/danted.conf &
