@@ -29,3 +29,5 @@ pass {
   protocol: tcp udp
 }
 EOF
+
+service danted restart
