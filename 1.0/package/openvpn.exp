@@ -28,11 +28,11 @@ expect {
 								set output [ exec ip route add to $env(VPN_ROUTE) via $ip dev $gw ]
 								puts "INFO:   Route to $env(VPN_ROUTE) via $ip dev $gw."
 								set result [ exec danted.sh $gw $env(SOCK_PORT) $env(VPN_ROUTE) ]
-								set result [ exec service danted restart ]
+								set result [ exec danted -D -f /etc/danted.conf ]
 							} else {
 								puts "WARN:   You need to add a custom route via $ip dev $gw."
 								set result [ exec danted.sh $gw $env(SOCK_PORT) 0.0.0.0/0 ]
-								set result [ exec service danted restart ]
+								set result [ exec danted -D -f /etc/danted.conf ]
 							}
 						}
 					}
