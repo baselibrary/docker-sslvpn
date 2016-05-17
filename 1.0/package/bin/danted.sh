@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+set -o pipefail
 
 GW="$1" 
 PORT="$2"
@@ -28,4 +30,4 @@ pass {
 }
 EOF
 
-exec danted -D -f /etc/danted.conf
+exec danted -D -f /etc/danted.conf &
