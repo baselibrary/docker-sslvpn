@@ -35,8 +35,6 @@ if [[ $# -lt 1 ]] || [[ "$1" == "-"* ]]; then
     	sed -i "s/Port.*/Port $SSH_PORT/g" /etc/ssh/sshd_config
   	fi
   	service ssh restart
-
-    
 	fi
 
 	## setting the totp seed
