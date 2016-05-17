@@ -10,7 +10,7 @@ cat <<EOF >> /etc/danted.conf
 logoutput: syslog
 
 # the interface name can be used instead of the address.
-internal: eth0 port = $PORT
+internal: 0.0.0.0 port = $PORT
 
 external: $GW
 
