@@ -30,4 +30,4 @@ pass {
 }
 EOF
 
-service danted restart
+danted -D
