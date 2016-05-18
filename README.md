@@ -1,51 +1,119 @@
-## ThoughtWorks Docker Image: sslvpn
+ ThoughtWorks Docker Image
+=========
+
+ 封装常用的SSLVPN客户端，自动连接设置的VPN并启动SSH和Socks 5 代理.
 
 [![](http://dockeri.co/image/baselibrary/sslvpn)](https://registry.hub.docker.com/u/baselibrary/sslvpn/)
 
-### SSLVPN Docker Image
+## 支持的TAGS
+- `latest`
+- `1.0`   
 
-* `latest`: sslvpn 1.0
-* `1.0`   : sslvpn 1.0
+## 如何使用
+### 启动一个实例
+    
+    docker run -d \
+      --device /dev/ppp \
+      --cap-add=NET_ADMIN \
+      -e VPN_TYPE=fortinet \
+      -e VPN_HOST=IP \
+      -e VPN_PORT=10443
+      -e VPN_USER=username \
+      -e VPN_PASS=password \
+      baselibrary/sslvpn:1.0
 
-### Installation
+## Environment Variables
+### VPN_TYPE
+目前支持以下两种类型的VPN厂商
 
-  docker pull baselibrary/sslvpn:1.0
+- `fortinet`
+- `openvpn`
 
-### Usage
+### VPN_HOST
+>适用VPN类型: 所有
 
-  #### 目前支持的SSLVPN类型:
-    ** Fortinet
-    ** OpenVPN
+远程VPN服务器的地址
 
-  ####	Fortinet的使用方法:
-  	`
-  	docker run -d --device /dev/ppp --cap-add=NET_ADMIN -e VPN_USER=username -e VPN_PASS=password -e VPN_TYPE=fortinet --net=host baselibrary/sslvpn:1.0 --args
-  	`
+### VPN_USER
+>适用VPN类型: 所有
 
-  	* 挂载 --device /dev/ppp 设备
-  	* 通过环境变量设置VPN类型
-  	* 通过环境变量设置用户名和密码
-  	* 必须使用主机网络
-  	* --cap-add=NET_ADMIN 设置容器操作网络的权限
+连接VPN的账户的用户名
+
+### VPN_PASS
+>适用VPN类型: 所有
+
+连接VPN的账户的密码
+
+### VPN_SEED
+>适用VPN类型: OpenVPN
+
+如果使用`Google Authenticator`的认证方式，设置16位种子
+
+### VPN_ROUTE
+>适用VPN类型: 所有
+
+如果需要自定义连接VPN后的路由，通过设置VPN_ROUTE为需要路由的源地址，如:   `10.138.111.0/255.255.255.0`
+
+### VPN_CA
+>适用VPN类型: OpenVPN
+
+OpenVPN的CA证书.
+
+### VPN_CLIENT_CERT
+>适用VPN类型: OpenVPN
+
+OpenVPN的客户端\用户证书.
+
+### VPN_CLIENT_KEY
+>适用VPN类型: OpenVPN
+
+OpenVPN的客户端\用户证书的KEY.
+
+### VPN_TLS_AUTH
+>适用VPN类型: OpenVPN
+
+OpenVPN的TLS auth key.
+
+### VPN_TRUSTED_CERT
+>适用VPN类型: Fortinet
+
+Fortinet VPN信任的证书sha签名.
+
+### SSH_PORT
+>适用VPN类型: 所有
+
+SSH的端口，默认`20022`.
+
+### SSH_PASS
+>适用VPN类型: 所有
+
+SSH的密码，默认为空，不设置.
+
+### AUTHORIZED_KEYS
+>适用VPN类型: 所有
+
+SSH的AUTHORIZED KEYS，默认为空，不设置.
+
+### SOCK_PORT
+>适用VPN类型: 所有
+
+SOCK代理的端口，默认`10080`.
+
+### SOCK_PASS
+>适用VPN类型: 所有
+
+SOCK代理的密码，默认为空，不设置.
 
 
-  #### OpenVPN的使用方法:
-  	`
-  	docker run -d --device /dev/net/tun --cap-add=NET_ADMIN -v /var/lib/sslvpn:/var/lib/sslvpn -e VPN_USER=username -e AUTH_SEED=XXX -e VPN_TYPE=openvpn --net=host baselibrary/sslvpn:1.0 --client --remote $IP $PORT --dev tun --proto tcp --resolv-retry infinite --ca /var/lib/sslvpn/ca.crt --cert /var/lib/sslvpn/my_id.crt --key /var/lib/sslvpn/id.key --tls-auth /var/lib/sslvpn/ta.key 1 --remote-cert-tls server --nobind --comp-lzo --persist-key --persist-tun --auth-user-pass
-  	`
+ 
+## 注意 
 
-  	* 挂载 --device dev/net/tun 设备
-  	* 通过环境变量设置VPN类型
-  	* 通过环境变量设置用户名和密码
-  	* 可以使用主机网络或容器网络
-  	* --cap-add=NET_ADMIN 设置容器操作网络的权限
-  	* 支持密码和Google Authenticator Token两种认证方式，使用Google Authenticator Token时候设置环境变量AUTH_SEED (16位种子代码)
++ SSLVPN需要挂载相应的设备:
+   OpenVPN需要挂载`/dev/net/tun`
+   Fortinet需要挂载`/dev/ppp`
++ 启动容器必须给实例设置网络管理的权限，使用如下参数:
+   `--cap-add=NET_ADMIN`
++ Fortinet的VPN采用ppp协议，需要使用host网络
++ 可以通过环境变量来改变SSH相关的设置，如果不设置任何SSH相关变量，SSH服务默认不启动
 
-
-  #### 可以通过环境变量来改变SSH相关的设置，如果不设置任何SSH相关变量，SSH服务默认不启动:
-
-  	* AUTHORIZED_KEYS  SSH的authorized key
-  	* SSH_PASS  SSH的密码(用户root)
-  	* SSH_PORT  SSH服务的端口
-
-
+ 
