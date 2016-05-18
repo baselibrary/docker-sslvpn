@@ -1,9 +1,9 @@
-logoutput: syslog
+logoutput: stdout
 
 # the interface name can be used instead of the address.
 internal: 0.0.0.0 port = {{ getenv "SOCK_PORT" }}
 
-external: eth0
+external: 127.0.0.1
 
 # methods for socks-rules.
 method: username none
@@ -26,8 +26,3 @@ pass {
   protocol: tcp udp
 }
 {{end}}
-
-block {
-	from: 0.0.0.0/0 to: 0.0.0.0/0
-	log: connect error
-}
