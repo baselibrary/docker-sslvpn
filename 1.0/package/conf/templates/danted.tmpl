@@ -1,4 +1,4 @@
-logoutput: stdout
+logoutput: stderr
 
 # the interface name can be used instead of the address.
 internal: 0.0.0.0 port = {{ getenv "SOCK_PORT" }}
@@ -11,8 +11,9 @@ external: eth0
 # methods for socks-rules.
 method: username none
 
-#user.privileged: proxy
+user.privileged: proxy
 user.notprivileged: nobody
+user.libwrap: nobody
 
 client pass {
 	from: 0.0.0.0/0 port 1-65535 to: 0.0.0.0/0
