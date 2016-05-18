@@ -1,3 +1,4 @@
 [template]
 src  = "fortinet.tmpl"
 dest = "/opt/sslvpn/conf/fortinet.conf"
+reload_cmd = "supervisorctl -c /opt/sslvpn/conf/supervisord.conf restart vpn"

@@ -1,3 +1,4 @@
 [template]
 src  = "danted.tmpl"
 dest = "/opt/sslvpn/conf/danted.conf"
+reload_cmd = "supervisorctl -c /opt/sslvpn/conf/supervisord.conf restart danted"

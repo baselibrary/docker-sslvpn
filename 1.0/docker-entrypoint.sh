@@ -48,7 +48,7 @@ if [[ $# -lt 1 ]] || [[ "$1" == "-"* ]]; then
   echo "========================================================================"
   echo "startup: run expect                                                     "
   echo "========================================================================"
-  confd -onetime -backend=env -confdir=/opt/sslvpn/conf
+  confd -onetime -backend=env -confdir=/opt/sslvpn/conf -config-file=/opt/sslvpn/conf/conf.d/$VPN_TYPE.toml
 
   exec supervisord -c /opt/sslvpn/conf/supervisord.conf
 else

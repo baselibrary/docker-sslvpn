@@ -1,3 +1,4 @@
 [template]
 src  = "openvpn.tmpl"
 dest = "/opt/sslvpn/conf/openvpn.conf"
+reload_cmd = "supervisorctl -c /opt/sslvpn/conf/supervisord.conf restart vpn"
