@@ -21,11 +21,11 @@ client pass {
 {{if getenv "VPN_ROUTE"}}
 pass {
 	from: 0.0.0.0/0 to: {{getenv "VPN_ROUTE"}}
-  protocol: tcp udp
+	protocol: tcp udp
 }
 {{else}}
 pass {
 	from: 0.0.0.0/0 to: 0.0.0.0/0
-  protocol: tcp udp
+	protocol: tcp udp
 }
 {{end}}
