@@ -9,6 +9,7 @@ expect {
 		expect -re "ppp\[0-9\]" {
 			set gw $expect_out(0,string)
 			set ip [ exec bash -c "ifconfig $gw | grep 'inet addr' | awk -F: '{print \$2}' | awk '{print \$1}'" ]
+			set env(VPN_IFACE) $gw
 			puts "INFO:   VPN_IFACE=$gw VPN_IP=$ip"
 			expect {
 				"Tunnel is up and running." {
@@ -23,7 +24,7 @@ expect {
 					}
 				}
 			}
+			interact
 		}
-		interact
 	}
 }
