@@ -2,8 +2,11 @@ logoutput: stdout
 
 # the interface name can be used instead of the address.
 internal: 0.0.0.0 port = {{ getenv "SOCK_PORT" }}
-
+{{if getenv "VPN_IFACE"}}
 external: {{ getenv "VPN_IFACE" }}
+{{else}}
+external: eth0
+{{end}}
 
 # methods for socks-rules.
 method: username none
