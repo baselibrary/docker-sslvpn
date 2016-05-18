@@ -18,6 +18,9 @@ expect {
 					} else {
 						puts "WARN:   You need to add a custom route via $ip dev $gw."
 					}
+					if { [catch {exec bash -c "confd -onetime -backend=env -confdir=/opt/sslvpn/conf -config-file=/opt/sslvpn/conf/conf.d/danted.toml"} result] } {
+						puts "$env(VPN_IFACE)"
+					}
 				}
 			}
 		}
