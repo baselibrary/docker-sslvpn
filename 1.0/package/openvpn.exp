@@ -3,16 +3,16 @@
 set arguments [lrange $argv 0 end]
 
 if { $env(VPN_ROUTE) !="" } {
-	spawn openvpn --route-noexec {*}$arguments
+	spawn openvpn --config /opt/sslvpn/conf/openvpn.conf --auth-user-pass --route-noexec {*}$arguments
 } else {
-	spawn openvpn {*}$arguments	
+	spawn openvpn --config /opt/sslvpn/conf/openvpn.conf --auth-user-pass {*}$arguments	
 }
 expect {
 	"Enter Auth Username:" {
 		send "$env(VPN_USER)\r"
 		expect {
 			"Enter Auth Password:" {
-				if { $env(AUTH_SEED) !="" } {
+				if { $env(VPN_SEED) !="" } {
 					set password [exec ga]
 					send "$password\n"
 				} else {
@@ -22,24 +22,19 @@ expect {
 				expect -re "tun\[0-9\]" {
 					set gw $expect_out(0,string)
 					set ip [ exec bash -c "ifconfig $gw | grep 'inet addr' | awk -F: '{print \$2}' | awk '{print \$1}'" ]
+					puts "INFO:   VPN_IFACE=$gw VPN_IP=$ip"
 					expect {
 						"*Initialization Sequence Completed" {
 							if { $env(VPN_ROUTE) !="" } {
 								set output [ exec ip route add to $env(VPN_ROUTE) via $ip dev $gw ]
 								puts "INFO:   Route to $env(VPN_ROUTE) via $ip dev $gw."
-								if {[catch { exec bash -c "danted.sh $gw $env(SOCK_PORT) $env(VPN_ROUTE)" } result] == 0} { 
-									puts "INFO:   Socks 5 running."
-								}
 							} else {
 								puts "WARN:   You need to add a custom route via $ip dev $gw."
-								if {[catch { exec bash -c "danted.sh $gw $env(SOCK_PORT) 0.0.0.0/0" } result] == 0} { 
-									puts "INFO:   Socks 5 running."
-								}
 							}
 						}
 					}
+					interact
 				}
-				interact
 			}
 		}
 	}

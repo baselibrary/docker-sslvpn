@@ -4,22 +4,25 @@
 set -e
 set -o pipefail
 
-#####   variables  ##### 
-: ${SSH_PORT:=20022}
-: ${SSH_CERT:=}
-: ${SSH_PASS:=}
-: ${VPN_TYPE:=}
-: ${VPN_USER:=}
-: ${VPN_PASS:=}
-: ${VPN_ROUTE:=}
-: ${AUTH_SEED:=}
-: ${SOCK_PORT:=10080}
+#####   variables  #####
+VPN_TYPE=${VPN_TYPE:=openvpn}
+VPN_USER=${VPN_USER:=}
+VPN_PASS=${VPN_PASS:=}
+VPN_SEED=${VPN_SEED:=}
+VPN_ROUTE=${VPN_ROUTE:=}
+SSH_PORT=${SSH_PORT:=20022}
+SSH_PASS=${SSH_PASS:=}
+SOCK_USER=${SOCK_USER:=sock}
+SOCK_PASS=${SOCK_PASS:=sock}
+SOCK_PORT=${SOCK_PORT:=10080}
+
+
 
 #run sslvpn in background
 if [[ $# -lt 1 ]] || [[ "$1" == "-"* ]]; then
 	## check the required parameters
-	if [ -z "$VPN_TYPE" -o -z "$VPN_USER" ]; then
-		echo >&2 'Error: vpn type and user option is not specified'
+	if [ -z "$VPN_TYPE" -o -z "$VPN_HOST" -o -z "$VPN_PORT" -o -z "$VPN_USER" ]; then
+		echo >&2 'Error: vpn option is not specified'
 		exit 1
 	fi
 
@@ -34,25 +37,20 @@ if [[ $# -lt 1 ]] || [[ "$1" == "-"* ]]; then
   	if [ "$SSH_PORT" ]; then
     	sed -i "s/Port.*/Port $SSH_PORT/g" /etc/ssh/sshd_config
   	fi
-  	service ssh restart
 	fi
 
 	## setting the totp seed
-  if [ "$AUTH_SEED" ]; then
-    /usr/bin/ansible local -o -c local -m shell  -a "echo $AUTH_SEED > ~/.ga && chmod 0400 ~/.ga"
+  if [ "$VPN_SEED" ]; then
+    /usr/bin/ansible local -o -c local -m shell  -a "echo $VPN_SEED > ~/.ga && chmod 0400 ~/.ga"
   fi
 
   ##### run scripts  #####
   echo "========================================================================"
   echo "startup: run expect                                                     "
   echo "========================================================================"
-  if [ -f "/opt/sslvpn/$VPN_TYPE.exp" ]; then
-  	while sleep 1; do
-    	exec expect /opt/sslvpn/$VPN_TYPE.exp "$@"
-  	done
-  else 
-  	echo "Unsupported vpn type"
-  fi
+  confd -onetime -backend=env -confdir=/opt/sslvpn/conf
+
+  exec supervisord -c /opt/sslvpn/conf/supervisord.conf
 else
   exec "$@"
 fi

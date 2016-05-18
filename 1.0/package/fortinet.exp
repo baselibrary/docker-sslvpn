@@ -2,30 +2,21 @@
 
 set arguments [lrange $argv 0 end]
 
-if { $env(VPN_ROUTE) !="" } {
-	spawn openfortivpn --no-routes -u $env(VPN_USER) {*}$arguments
-} else {
-	spawn openfortivpn -u $env(VPN_USER) {*}$arguments	
-}
+spawn openfortivpn -c /opt/sslvpn/conf/fortinet.conf -u $env(VPN_USER) {*}$arguments	
 expect {
 	"VPN account password:" {
 		send "$env(VPN_PASS)\n"
 		expect -re "ppp\[0-9\]" {
 			set gw $expect_out(0,string)
 			set ip [ exec bash -c "ifconfig $gw | grep 'inet addr' | awk -F: '{print \$2}' | awk '{print \$1}'" ]
+			puts "INFO:   VPN_IFACE=$gw VPN_IP=$ip"
 			expect {
 				"Tunnel is up and running." {
 					if { $env(VPN_ROUTE) !="" } {
 						set output [ exec ip route add to $env(VPN_ROUTE) via $ip dev $gw ]
 						puts "INFO:   Route to $env(VPN_ROUTE) via $ip dev $gw."
-						if {[catch { exec bash -c "danted.sh $gw $env(SOCK_PORT) $env(VPN_ROUTE)" } result] == 0} { 
-							puts "INFO:   Socks 5 running."
-						}
 					} else {
 						puts "WARN:   You need to add a custom route via $ip dev $gw."
-						if {[catch { exec bash -c "danted.sh $gw $env(SOCK_PORT) 0.0.0.0/0" } result] == 0} { 
-							puts "INFO:   Socks 5 running."
-						}
 					}
 				}
 			}

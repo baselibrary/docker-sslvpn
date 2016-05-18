@@ -1,3 +1,3 @@
 [template]
 src  = "openvpn.tmpl"
-dest = "/etc/openvpn/openvpn.conf"
+dest = "/opt/sslvpn/conf/openvpn.conf"
